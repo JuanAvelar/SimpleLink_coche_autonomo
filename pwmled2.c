@@ -81,8 +81,20 @@ uint16_t    duty3 = 0;
  */
 void gpioButtonFxn0(uint_least8_t index)
 {
-    PWM_setDuty(pwm3, 1500);
-
+    if(pwm2 == NULL){
+        PWM_Params params;
+        PWM_Params_init(&params);//give params a default state
+        params.dutyUnits = PWM_DUTY_US;
+        params.dutyValue = 1000;
+        params.periodUnits = PWM_PERIOD_US;
+        params.periodValue = pwmPeriod;
+        pwm2 = PWM_open(Board_PWM1, &params);
+        if (pwm2 == NULL) {
+            // Board_PWM1 did not open
+            while (1);
+        }
+        PWM_start(pwm2);
+    }
 }
 
 void *mainThread(void *arg0)
@@ -109,14 +121,7 @@ void *mainThread(void *arg0)
         while (1);
     }
     PWM_start(pwm1);
-/*
-    pwm2 = PWM_open(Board_PWM1, &params);
-    if (pwm2 == NULL) {
-        // Board_PWM0 did not open
-        while (1);
-    }
-    PWM_start(pwm2);
-*/
+
     PWM_Params params2;
             PWM_Params_init(&params2);//give params a default state
             params2.dutyUnits = PWM_DUTY_US;
@@ -129,15 +134,14 @@ void *mainThread(void *arg0)
                 while (1);
             }
             PWM_start(pwm3);
-/*
-    GPIO_init();
+
+    //GPIO_init();//Sets all GPIO into gpio mode which is not wanted. And it also works with a semaphore so it doesn´t matter if we are using NoRtos
     GPIO_setConfig(Board_GPIO_BUTTON0, GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_FALLING);
     // install Button callback
     GPIO_setCallback(Board_GPIO_BUTTON0, gpioButtonFxn0);
-
     // Enable interrupts
     GPIO_enableInt(Board_GPIO_BUTTON0);
-*/
+
 
     Timer_Params_init(&params_time);
             params_time.period = 10000;
