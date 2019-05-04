@@ -229,8 +229,9 @@ GPIO_PinConfig gpioPinConfigs[] = {
 
     /* output pins */
     /* CC3220S_LAUNCHXL_GPIO_LED_D10 */
-    GPIOCC32XX_GPIO_09 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
-
+    //GPIOCC32XX_GPIO_09 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
+    /*Do not configure LED_D10*/
+    GPIOCC32XX_GPIO_09 | GPIO_DO_NOT_CONFIG,
     /*
      *  CC3220S_LAUNCHXL_GPIO_LED_D8 and CC3220S_LAUNCHXL_GPIO_LED_D9 are shared with the
      *  I2C and PWM peripherals. In order for those examples to work, these
@@ -696,9 +697,9 @@ const TimerCC32XX_HWAttrs timerCC3220SHWAttrs[CC3220S_LAUNCHXL_TIMERCOUNT] = {
         .intPriority = ~0
     },
     {
-         .baseAddress = TIMERA1_BASE,
+         .baseAddress = TIMERA3_BASE,
          .subTimer = TimerCC32XX_timer16B,
-         .intNum = INT_TIMERA1B,
+         .intNum = INT_TIMERA3B,
          .intPriority = ~0
     },
 };

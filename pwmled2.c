@@ -47,8 +47,7 @@
 #include "I2C_Slave.h"
 
 
-/* Callback used for updating output variables. */
-void timerCallback(Timer_Handle myHandle);
+
 
 /*
  *  ======== mainThread ========
@@ -65,6 +64,51 @@ PWM_Handle pwm1 = NULL;//pointer to pwm config
 PWM_Handle pwm2 = NULL;
 PWM_Handle pwm3 = NULL;
 uint16_t    duty3 = 0;
+uint8_t     bandera = 0;
+
+/* Callback used for updating output variables. */
+void timerCallback(Timer_Handle myHandle)
+{
+            data = (int)I2C_Slave_Get_Data();
+            //P21
+            if(pwm1 != NULL){
+                PWM_setDuty(pwm1, duty);
+            }
+            //P64
+            if(pwm2 != NULL){
+                PWM_setDuty(pwm2, duty);
+            }
+            //P01
+            if(pwm3 != NULL){
+                PWM_setDuty(pwm3, (1300 + (uint16_t)((float)data*(float)2.6)));//este pwm debe ir de 100 a 200
+            }
+            //PWM_setDuty(pwm3, 1500);
+           //PWM_setDuty(pwm3, (1300 + (uint16_t)((float)duty*(float)0.22)));//30 degrees//duty va de 3000 a 0
+            duty = (duty + dutyInc);
+
+            if (duty == pwmPeriod || (!duty)) {
+                dutyInc = - dutyInc;
+            }
+            if(bandera){
+                if(pwm2 == NULL){
+                    PWM_Params params3;
+                    PWM_Params_init(&params3);//give params a default state
+                    params3.dutyUnits = PWM_DUTY_US;
+                    params3.dutyValue = 2900;
+                    params3.periodUnits = PWM_PERIOD_US;
+                    params3.periodValue = 3000;
+                    pwm2 = PWM_open(Board_PWM1, &params3);
+                    if (pwm2 == NULL) {
+                    // Board_PWM1 did not open
+                        while (1);
+                    }
+                    else
+                        PWM_start(pwm2);
+                }
+                bandera = 0;
+            }
+
+}
 
 /*PIN description
  * I2C_SCL  P03
@@ -81,20 +125,7 @@ uint16_t    duty3 = 0;
  */
 void gpioButtonFxn0(uint_least8_t index)
 {
-    if(pwm2 == NULL){
-        PWM_Params params;
-        PWM_Params_init(&params);//give params a default state
-        params.dutyUnits = PWM_DUTY_US;
-        params.dutyValue = 1000;
-        params.periodUnits = PWM_PERIOD_US;
-        params.periodValue = pwmPeriod;
-        pwm2 = PWM_open(Board_PWM1, &params);
-        if (pwm2 == NULL) {
-            // Board_PWM1 did not open
-            while (1);
-        }
-        PWM_start(pwm2);
-    }
+    bandera = 1;
 }
 
 void *mainThread(void *arg0)
@@ -102,13 +133,26 @@ void *mainThread(void *arg0)
     Timer_Handle timer0;
     Timer_Params params_time;
     Timer_init();
+    Timer_Params_init(&params_time);
+    params_time.period = 10000;
+    params_time.periodUnits = Timer_PERIOD_US;
+    params_time.timerMode = Timer_CONTINUOUS_CALLBACK;
+    params_time.timerCallback = timerCallback;
+
+    timer0 = Timer_open(Board_TIMER2, &params_time);
+
+    if (timer0 == NULL) {
+        // Failed to initialize timer
+        while (1) {}
+    }
     /* Sleep time in microseconds*/
-    uint32_t   time = 500;
+    uint32_t   time = 10000;
     PWM_Params params;
 
     /* Call driver init functions. */
 
     I2C_Slave_init(SimpleLink_Slave_Address);
+
     PWM_init();//just turns a flag which says it is initialized
     PWM_Params_init(&params);//give params a default state
     params.dutyUnits = PWM_DUTY_US;
@@ -123,48 +167,61 @@ void *mainThread(void *arg0)
     PWM_start(pwm1);
 
     PWM_Params params2;
-            PWM_Params_init(&params2);//give params a default state
-            params2.dutyUnits = PWM_DUTY_US;
-            params2.dutyValue = (uint32_t)1500;
-            params2.periodUnits = PWM_PERIOD_US;
-            params2.periodValue = 20000;
-            pwm3 = PWM_open(Board_PWM2, &params2);//returns the variable of type PWM_Config_//
-            if (pwm3 == NULL) {
-                // Board_PWM0 did not open
-                while (1);
-            }
-            PWM_start(pwm3);
-
-    //GPIO_init();//Sets all GPIO into gpio mode which is not wanted. And it also works with a semaphore so it doesn´t matter if we are using NoRtos
+    PWM_Params_init(&params2);//give params a default state
+    params2.dutyUnits = PWM_DUTY_US;
+    params2.dutyValue = (uint32_t)1500;
+    params2.periodUnits = PWM_PERIOD_US;
+    params2.periodValue = 20000;
+    pwm3 = PWM_open(Board_PWM2, &params2);//returns the variable of type PWM_Config_//
+    if (pwm3 == NULL) {
+        // Board_PWM0 did not open
+        while (1);
+    }
+    PWM_start(pwm3);
+/*
+    PWM_Params params3;
+    PWM_Params_init(&params3);//give params a default state
+    params3.dutyUnits = PWM_DUTY_US;
+    params3.dutyValue = 1000;
+    params3.periodUnits = PWM_PERIOD_US;
+    params3.periodValue = 3000;
+    pwm2 = PWM_open(Board_PWM1, &params3);
+    if (pwm2 == NULL) {
+    // Board_PWM1 did not open
+        while (1);
+    }
+    else
+        PWM_start(pwm2);
+*/
+    GPIO_init();//Sets all GPIO into gpio mode which is not wanted. And it also works with a semaphore so it doesn´t matter if we are using NoRtos
     GPIO_setConfig(Board_GPIO_BUTTON0, GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_FALLING);
     // install Button callback
     GPIO_setCallback(Board_GPIO_BUTTON0, gpioButtonFxn0);
     // Enable interrupts
     GPIO_enableInt(Board_GPIO_BUTTON0);
 
+    //Used timers
+    //Timer0A
+    //Timer1A
+    //Timer2B
+    //PWM_setDuty(pwm1,2500);
+    //PWM_setDuty(pwm2,2500);
 
-    Timer_Params_init(&params_time);
-            params_time.period = 10000;
-            params_time.periodUnits = Timer_PERIOD_US;
-            params_time.timerMode = Timer_CONTINUOUS_CALLBACK;
-            params_time.timerCallback = timerCallback;
-
-            timer0 = Timer_open(Board_TIMER0, &params_time);
-
-            if (timer0 == NULL) {
-                /* Failed to initialize timer */
-                while (1) {}
-            }
-
-            if (Timer_start(timer0) == Timer_STATUS_ERROR) {
-                /* Failed to start timer */
-                while (1) {}
-            }
+    if (Timer_start(timer0) == Timer_STATUS_ERROR) {
+        // Failed to start timer
+        while (1) {}
+    }
+    //PWM_setDuty(pwm1,400);
 
 
     /* Loop forever incrementing the PWM duty */
     while (1) {
         usleep(time);//implement a timer instead of usleep
+        /*data = (int)I2C_Slave_Get_Data();
+        if(pwm3 != NULL)
+                        //PWM_setDuty(pwm3, 1500);
+                        //PWM_setDuty(pwm3, (1300 + (uint16_t)((float)duty*(float)0.22)));//30 degrees//duty va de 3000 a 0
+                        PWM_setDuty(pwm3, (1300 + (uint16_t)((float)data*(float)2.6)));*/
     }
 }
 /*
@@ -172,25 +229,4 @@ void *mainThread(void *arg0)
  * the LED is toggled each time this function is called, the LED will blink at
  * a rate of once every 2 seconds.
  * */
-void timerCallback(Timer_Handle myHandle)
-{
-            data = (int)I2C_Slave_Get_Data();
-            //P21
-            if(pwm1 != NULL)
-                PWM_setDuty(pwm1, duty);
-            //P64
-            if(pwm2 != NULL)
-                PWM_setDuty(pwm2, duty);
-            //P01
-            if(pwm3 != NULL)
-                //PWM_setDuty(pwm3, 1500);
-                //PWM_setDuty(pwm3, (1300 + (uint16_t)((float)duty*(float)0.22)));//30 degrees//duty va de 3000 a 0
-                PWM_setDuty(pwm3, (1300 + (uint16_t)((float)data*(float)2.6)));//este pwm debe ir de 100 a 200
 
-            duty = (duty + dutyInc);
-
-            if (duty == pwmPeriod || (!duty)) {
-                dutyInc = - dutyInc;
-            }
-
-}

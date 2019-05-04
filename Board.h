@@ -75,9 +75,9 @@ extern "C" {
 
 #define Board_I2S0                   CC3220S_LAUNCHXL_I2S0
 
-#define Board_PWM0                   CC3220S_LAUNCHXL_PWM2//GPIO25
-#define Board_PWM1                   CC3220S_LAUNCHXL_PWM0//GPIO9
-#define Board_PWM2                   CC3220S_LAUNCHXL_PWM5//GPIO10
+#define Board_PWM0                   CC3220S_LAUNCHXL_PWM2//GPIO25//Pin21
+#define Board_PWM1                   CC3220S_LAUNCHXL_PWM0//GPIO24//Pin17
+#define Board_PWM2                   CC3220S_LAUNCHXL_PWM5//GPIO9 //Pin64
 
 #define Board_SD0                    CC3220S_LAUNCHXL_SD0
 

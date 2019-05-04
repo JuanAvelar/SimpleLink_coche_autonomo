@@ -130,35 +130,35 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.out \
+Proyecto_LAB_PIM.out \
 
 EXE_OUTPUTS__QUOTED += \
-"pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.out" \
+"Proyecto_LAB_PIM.out" \
 
 BIN_OUTPUTS += \
-pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.bin \
+Proyecto_LAB_PIM.bin \
 
 BIN_OUTPUTS__QUOTED += \
-"pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.bin" \
+"Proyecto_LAB_PIM.bin" \
 
 
 # All Target
 all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.out"
+	@$(MAKE) --no-print-directory -Onone "Proyecto_LAB_PIM.out"
 
 # Tool invocations
-pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+Proyecto_LAB_PIM.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=vfplib -me --define=NORTOS_SUPPORT -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.map" -i"C:/ti/simplelink_cc32xx_sdk_2_40_02_00/source" -i"C:/ti/simplelink_cc32xx_sdk_2_40_02_00/kernel/nortos" -i"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib" --diag_suppress=10063 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave_linkInfo.xml" --entry_point=resetISR --rom_model -o "pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=vfplib -me --define=NORTOS_SUPPORT -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"Proyecto_LAB_PIM.map" -i"C:/ti/simplelink_cc32xx_sdk_2_40_02_00/source" -i"C:/ti/simplelink_cc32xx_sdk_2_40_02_00/kernel/nortos" -i"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib" --diag_suppress=10063 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Proyecto_LAB_PIM_linkInfo.xml" --entry_point=resetISR --rom_model -o "Proyecto_LAB_PIM.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
 
-pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.bin: $(EXE_OUTPUTS)
+Proyecto_LAB_PIM.bin: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex"  -o "pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.bin" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex"  -o "Proyecto_LAB_PIM.bin" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -172,7 +172,7 @@ clean:
 	-@echo ' '
 
 post-build:
-	-C:/ti/ccsv8/utils/tiobj2bin/tiobj2bin pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.out pwmled2_CC3220S_LAUNCHXL_nortos_ccs2_I2CSlave.bin C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armofd C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex C:/ti/ccsv8/utils/tiobj2bin/mkhex4bin
+	-C:/ti/ccsv8/utils/tiobj2bin/tiobj2bin Proyecto_LAB_PIM.out Proyecto_LAB_PIM.bin C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armofd C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex C:/ti/ccsv8/utils/tiobj2bin/mkhex4bin
 	-@echo ' '
 
 .PHONY: all clean dependents
