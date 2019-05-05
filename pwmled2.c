@@ -80,7 +80,7 @@ void timerCallback(Timer_Handle myHandle)
             }
             //P01
             if(pwm3 != NULL){
-                PWM_setDuty(pwm3, (1300 + (uint16_t)((float)data*(float)2.6)));//este pwm debe ir de 100 a 200
+                PWM_setDuty(pwm3, (1000 + (uint16_t)((float)data*(float)4)));//este pwm debe ir de 5% a 10%
             }
             //PWM_setDuty(pwm3, 1500);
            //PWM_setDuty(pwm3, (1300 + (uint16_t)((float)duty*(float)0.22)));//30 degrees//duty va de 3000 a 0
