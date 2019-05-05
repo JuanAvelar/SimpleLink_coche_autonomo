@@ -41,7 +41,7 @@ void        I2C_Slave_init(uint8_t address){
     //clock_enable();Se empieza con Ti no rtos
     I2CSlaveInit        (SimpleLink_Slave_Dir,address);
     //I2CSlaveACKOverride (SimpleLink_Slave_Dir,true);
-    data_from_master = 0;
+    data_from_master = 128;
     //NVIC_enable();Se habilita cuando le pasas la funcion
     //void (*FcnPtr)() = &I2C_Slave_Store_Data;
     //std::function<void (const esclavo_i2c&)> FcnPtr = func;
